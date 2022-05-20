@@ -1,9 +1,12 @@
 import React from 'react'
 import {Product, FooterBanner, HeroBanner} from '../ECommerce/components'
+import { client } from '../ECommerce/lib/client'
 
-const Home = () => {
+
+const Home = ({products, bannerData}) => {
   return (<div>
     <HeroBanner/>
+	
     
 
     <div className='products-heading'>
@@ -11,7 +14,7 @@ const Home = () => {
       <p>Speakers of many variations</p>
     </div>
 
-    <div className='products-container'>{['Product 1', 'Product2'].map((product) => product)}</div>
+    <div className='products-container'>{products?.map((product) => product.name)}</div>
 
     <FooterBanner/>
 	</div>
@@ -19,4 +22,16 @@ const Home = () => {
   )
 }
 
+export const getServerSideProps = async () => {
+	const query = '*[_type == "product"]';
+	const products = await client.fetch(query);
+
+	const bannerQuery = '*[_type == "banner"]';
+	const bannerData = await client.fetch(bannerQuery);
+
+	return {
+		props: {products, bannerData}
+	}
+
+}
 export default Home
